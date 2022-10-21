@@ -1,6 +1,14 @@
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <Arduino_JSON.h>
 #include "ElectricityCalc.h"
+#include "config.h"
 
 #define CURRENT_INPUT_PIN A0
+
+
 
 int roundToN(double value, int n) {
   return int(value / n) * n;
