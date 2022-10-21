@@ -2,6 +2,10 @@
 
 #define CURRENT_INPUT_PIN A0
 
+int roundToN(double value, int n) {
+  return int(value / n) * n;
+}
+
 ElectricityCalc electricityCalc(CURRENT_INPUT_PIN);
 
 void setup() {
@@ -12,6 +16,6 @@ void loop() {
   electricityCalc.updateValues();
   Serial.print(electricityCalc.power);
   Serial.println(" kwh");
-  Serial.print(electricityCalc.roundEnergyToN(10));
+  Serial.print(roundToN(electricityCalc.energy, 10));
   Serial.println(" W");
 }
