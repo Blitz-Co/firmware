@@ -1,13 +1,6 @@
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <Arduino_JSON.h>
-#include "ElectricityCalc.h"
-#include "config.h"
-
-#define CURRENT_INPUT_PIN A0
-
+#include "src/ElectricityCalc.h"
+#include "src/config.h"
+#include "src/wifi/accessPoint.h"
 
 
 int roundToN(double value, int n) {
@@ -17,13 +10,13 @@ int roundToN(double value, int n) {
 ElectricityCalc electricityCalc(CURRENT_INPUT_PIN);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  delay(1000);
+  initAP(AP_SSID, AP_PWD);
 }
 
 void loop() {
   electricityCalc.updateValues();
-  Serial.print(electricityCalc.power);
-  Serial.println(" kwh");
-  Serial.print(roundToN(electricityCalc.energy, 10));
-  Serial.println(" W");
+  Serial.printf("Stations connected = %d\n", WiFi.softAPgetStationNum());
+  delay(3000);
 }
