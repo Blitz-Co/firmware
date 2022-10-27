@@ -12,7 +12,11 @@ ElectricityCalc electricityCalc(CURRENT_INPUT_PIN);
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  initAP(AP_SSID, AP_PWD);
+  IPAddress ip = initAP(AP_SSID, AP_PWD);
+  if (DEBUG) {
+    Serial.print("Access point set up. IP address = ");
+    Serial.println(ip);
+  }
 }
 
 void loop() {
