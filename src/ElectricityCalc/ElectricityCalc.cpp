@@ -3,10 +3,11 @@
 #define CALIBRATION 111.1
 
 ElectricityCalc::ElectricityCalc(int pin) {
-  emon.current(pin, CALIBRATION);
+  emon.current(pin, CALIBRATION); // Initialize energy monitor
 }
 
 void ElectricityCalc::updateValues() {
+  // Calculate power by taking the area under the energy function curve
   int startTime = millis();
   m_calcIrms();
   m_calcEnergy();
