@@ -7,6 +7,4 @@ public:
     const char* pwd;
 };
 
-bool initFS();
-bool createAP(const char* ssid, const char* pwd);
-void obtainWifiCredentials();
+void obtainWifiCredentials(const char* ap_ssid, const char* ap_pwd);

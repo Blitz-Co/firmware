@@ -2,8 +2,10 @@
 #include <ESP8266WebServer.h>
 #include "LittleFS.h"
 #include "AccessPoint.h"
+#include "../config.h"
 
 ESP8266WebServer server(80);
+
 
 char* mReadFile(const char* fn) {
   File file = LittleFS.open(fn, "r");
@@ -41,21 +43,31 @@ void mHandleIndexPost() {
   delete[] fileContents;
 }
 
-bool initFS() {
+bool mInitFS() {
   return LittleFS.begin();
 }
 
-bool createAP(const char* ssid, const char* pwd) {
+bool mCreateAP(const char* ssid, const char* pwd) {
   return WiFi.softAP(ssid, pwd);
 }
 
-void obtainWifiCredentials() {
-  server.on("/", HTTP_GET, mHandleIndexGet);
-  server.on("/", HTTP_POST, mHandleIndexPost);
-  server.begin();
+void obtainWifiCredentials(const char* ap_ssid, const char* ap_pwd) {
+  bool initialized = mInitFS();
+  bool created = mCreateAP(ap_ssid, ap_pwd);
+  if (DEBUG) {
+    Serial.print("LittleFS initialized: ");
+    Serial.println(initialized);
+    Serial.print("AP created: ");
+    Serial.println(created);
+  }
+  if (created && initialized) {
+    server.on("/", HTTP_GET, mHandleIndexGet);
+    server.on("/", HTTP_POST, mHandleIndexPost);
+    server.begin();
 
-  bool listen = true;
-  while (listen) {
-     server.handleClient();
+    bool listen = true;
+    while (listen) {
+      server.handleClient();
+    }
   }
 }
