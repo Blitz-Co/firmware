@@ -6,8 +6,18 @@
 
 ESP8266WebServer server(80);
 
+WifiCredentials credentials;
+bool credentialsObtained = false;
 
-char* mReadFile(const char* fn) {
+WifiCredentials::WifiCredentials(const char* wifi_ssid, const char* wifi_pwd) {
+  ssid = wifi_ssid;
+  pwd = wifi_pwd;
+}
+
+WifiCredentials::WifiCredentials() {}
+
+
+char* readFile(const char* fn) {
   File file = LittleFS.open(fn, "r");
   if (file) {
     size_t fileSize = file.size();
@@ -23,51 +33,48 @@ char* mReadFile(const char* fn) {
   return NULL;
 }
 
-void mHandleIndexGet() {
-  char* fileContents = mReadFile("index.html");
+void handleIndexGet() {
+  char* fileContents = readFile("index.html");
   server.send(200, "text/html", fileContents); 
   delete[] fileContents;
 }
 
-void mHandleIndexPost() {
+void handleIndexPost() {
   char* fileContents;
   if (server.hasArg("ssid") && server.hasArg("pwd")) {
-    Serial.println(server.arg("ssid"));
-    Serial.println(server.arg("pwd"));
-    fileContents = mReadFile("connecting.html");
+    credentials.ssid = server.arg("ssid").c_str();
+    credentials.pwd = server.arg("pwd").c_str();
+    fileContents = readFile("connecting.html");
     server.send(200, "text/html", fileContents);
+    delay(1500);
+    credentialsObtained = true;
   } else {
-    fileContents = mReadFile("error.html");
+    fileContents = readFile("error.html");
     server.send(400, "text/html", fileContents);
   }
   delete[] fileContents;
 }
 
-bool mInitFS() {
-  return LittleFS.begin();
-}
-
-bool mCreateAP(const char* ssid, const char* pwd) {
-  return WiFi.softAP(ssid, pwd);
-}
-
-void obtainWifiCredentials(const char* ap_ssid, const char* ap_pwd) {
-  bool initialized = mInitFS();
-  bool created = mCreateAP(ap_ssid, ap_pwd);
+WifiCredentials obtainWifiCredentials(const char* ap_ssid, const char* ap_pwd) {
+  bool initializedFS = LittleFS.begin();
+  bool created = WiFi.softAP(ap_ssid, ap_pwd);
   if (DEBUG) {
-    Serial.print("LittleFS initialized: ");
-    Serial.println(initialized);
-    Serial.print("AP created: ");
+    Serial.print("LittleFS initialized = ");
+    Serial.println(initializedFS);
+    Serial.print("AP created = ");
     Serial.println(created);
   }
-  if (created && initialized) {
-    server.on("/", HTTP_GET, mHandleIndexGet);
-    server.on("/", HTTP_POST, mHandleIndexPost);
+  if (created && initializedFS) {
+    server.on("/", HTTP_GET, handleIndexGet);
+    server.on("/", HTTP_POST, handleIndexPost);
     server.begin();
 
-    bool listen = true;
-    while (listen) {
+    while (!credentialsObtained) {
       server.handleClient();
     }
+    WiFi.softAPdisconnect(true);
+    server.stop();
   }
+  server.close();
+  return credentials;
 }

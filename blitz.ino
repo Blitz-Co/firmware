@@ -8,7 +8,11 @@
 
 void setup() {
   Serial.begin(115200);
-  obtainWifiCredentials(AP_SSID, AP_PWD);
+  WifiCredentials credentials = obtainWifiCredentials(AP_SSID, AP_PWD);
+  Serial.print("SSID: ");
+  Serial.println(credentials.ssid);
+  Serial.print("PWD: ");
+  Serial.println(credentials.pwd);
 }
 
 void loop() {
