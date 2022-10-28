@@ -1,7 +1,7 @@
 #define DEVICE_ID "id-123"
 
-#define AP_SSID DEVICE_ID "-config"
-#define AP_PWD "password"
+#define AP_SSID DEVICE_ID " (config)"
+#define AP_PWD "passwordd"
 
 #define CURRENT_INPUT_PIN A0
 

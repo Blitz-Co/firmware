@@ -1,6 +1,12 @@
 #pragma once
 
-#include <ESP8266WiFi.h>
+class WifiCredentials {
+public:
+    WifiCredentials(const char* wifi_ssid, const char* wifi_pwd);
+    const char* ssid;
+    const char* pwd;
+};
 
-IPAddress initAP(const char* ssid, const char* pwd);
-void disconnectAP();
+bool initFS();
+bool createAP(const char* ssid, const char* pwd);
+void obtainWifiCredentials();
