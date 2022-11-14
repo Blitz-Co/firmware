@@ -7,6 +7,48 @@
     <title>Blitz configuration</title>
 </head>
 <body>
-    <h1>Please wait. Connecting to Wi-Fi...</h1>
+    <div id="message">Please wait. Connecting to Wi-Fi <span id="timer"></span>...</div>
+    <div id="error"></div>
+    <div id="success"></div>
+    <script>
+        const serverAddress = "http://192.168.4.1";
+        const timeout = 15000;
+        var secondsPassed = 0;
+
+        const timer = document.getElementById("timer");
+        updateTimer = setInterval(update, 1000);
+
+        var hasConnected = false;
+
+        update();
+        checkConnectivity();
+        function update() {
+            timer.innerHTML = secondsPassed + "/" + (timeout / 1000);
+            secondsPassed += 1;
+            if (hasConnected) {
+                clearInterval(updateTimer);
+                document.getElementById("message").innerHTML = "Connected succesfully!";
+            } else if (secondsPassed > (timeout / 1000) + 1) {
+                clearInterval(updateTimer);
+                document.getElementById("message").innerHTML = "Credentials not correct, please re-enter. Redirecting shortly...";
+                setTimeout(() => {
+                    document.location = "/";
+                }, 2000);
+            }
+
+        }
+
+        function checkConnectivity() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (xhttp.responseText == 1) hasConnected = true;
+                    else setTimeout(checkConnectivity, 500);
+                }
+            };
+            xhttp.open("GET", serverAddress + "/isConnected", true); 
+            xhttp.send();
+        }
+    </script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+#pragma once
+
 // Unique identifier of the device
 #define DEVICE_ID "id-123"
 

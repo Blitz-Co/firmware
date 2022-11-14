@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Blitz configuration</title>
 </head>
 <body>
     <h3>Please enter your wi-fi credentials.</h3>
-    <form action="/" method="POST">
+    <form action="/" method="POST" onsubmit="loading();">
         <input type="text" name="ssid" value="ssid">
         <input type="text" name="pwd" value="pwd">
         <input type="submit" value="Send">
